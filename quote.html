@@ -3883,7 +3883,7 @@ const RATING_FIELD_NAMES = new Set([
 ]);
 
 const $ = (selector) => document.querySelector(selector);
-const $ = (selector) => Array.from(document.querySelectorAll(selector));
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 const yenFormatter = new Intl.NumberFormat("ja-JP", {
   style: "currency",
   currency: "JPY",
@@ -4075,16 +4075,16 @@ function setStep(nextStep, { skipValidation = false } = {}) {
   state.step = Math.max(0, Math.min(COMPLETION_STEP, nextStep));
   if (state.step < COMPLETION_STEP) state.highestVisited = Math.max(state.highestVisited, state.step);
 
-  $(".flow-step").forEach((step) => {
+  $$(".flow-step").forEach((step) => {
     step.classList.toggle("active", Number(step.dataset.step) === state.step);
   });
 
-  $(".progress-track li").forEach((item, index) => {
+  $$(".progress-track li").forEach((item, index) => {
     item.classList.toggle("active", index === state.step);
     item.classList.toggle("complete", index < state.step || state.paymentCompleted);
   });
 
-  $(".step-nav-item").forEach((button) => {
+  $$(".step-nav-item").forEach((button) => {
     const index = Number(button.dataset.navStep);
     button.classList.toggle("active", index === state.step);
     button.classList.toggle("complete", index < state.step || state.paymentCompleted);
@@ -4261,7 +4261,7 @@ function invalidateQuote() {
   state.paymentCompleted = false;
   state.activationCode = "";
   state.highestVisited = Math.min(state.highestVisited, 4);
-  $(".step-nav-item").forEach((button) => {
+  $$(".step-nav-item").forEach((button) => {
     button.disabled = Number(button.dataset.navStep) > state.highestVisited;
   });
   $("#quoteStatus").textContent = "再見積りが必要";
@@ -4369,7 +4369,7 @@ function renderPlanGuide() {
   const plan = selectedPlan();
   $("#guideTitle").textContent = `${plan}を選択中`;
   $("#guideText").textContent = planGuides[plan];
-  $(".plan-option").forEach((card) => card.classList.toggle("active", card.dataset.planCard === plan));
+  $$(".plan-option").forEach((card) => card.classList.toggle("active", card.dataset.planCard === plan));
 }
 
 function renderReview() {
@@ -4430,7 +4430,7 @@ function renderPayment() {
   const reviewPending = requiresManualReview();
   $("#paymentMonthlyPremium").textContent = premium ? formatYen(premium) : "査定後に表示";
   const method = formValue("paymentMethod") || "CARD";
-  $("[data-payment-method]").forEach((item) => {
+  $$("[data-payment-method]").forEach((item) => {
     item.classList.toggle("active", item.dataset.paymentMethod === method);
   });
   $("#cardPaymentFields").hidden = method !== "CARD";
@@ -4646,7 +4646,7 @@ function loadDraft() {
     const draft = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
     if (!draft?.values) return;
     Object.entries(draft.values).forEach(([name, value]) => {
-      const fields = $(`[name="${name}"]`);
+      const fields = $$(`[name="${name}"]`);
       fields.forEach((field) => {
         if (field.type === "radio") field.checked = field.value === value;
         else if (field.type === "checkbox") field.checked = Boolean(value);
@@ -4676,7 +4676,7 @@ function wireEvents() {
     window.setTimeout(() => { $("#saveAndExitButton").textContent = "保存して中断"; }, 1800);
   });
 
-  $(".step-nav-item").forEach((button) => {
+  $$(".step-nav-item").forEach((button) => {
     button.addEventListener("click", () => setStep(Number(button.dataset.navStep), { skipValidation: true }));
   });
 
@@ -4734,14 +4734,14 @@ function wireEvents() {
     });
   });
 
-  $("[name=\"planCode\"]").forEach((radio) => {
+  $$("[name=\"planCode\"]").forEach((radio) => {
     radio.addEventListener("change", () => {
       renderPlanGuide();
       renderAll();
     });
   });
 
-  $("[data-plan-guide-link]").forEach((link) => {
+  $$("[data-plan-guide-link]").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const radio = document.querySelector(`[name="planCode"][value="${link.dataset.planGuideLink}"]`);
@@ -4753,7 +4753,7 @@ function wireEvents() {
     });
   });
 
-  $("input, select").forEach((field) => {
+  $$("input, select").forEach((field) => {
     field.addEventListener("input", () => {
       if (RATING_FIELD_NAMES.has(field.name)) invalidateQuote();
       if (field.name) setFieldError(field.name, "");
