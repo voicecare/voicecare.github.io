@@ -3694,7 +3694,7 @@ const prefectureCenters = {
 };
 
 function extractPrefecture(value) {
-  return Object.keys(prefectureCenters).find((prefecture) => value.includes(prefecture)) || "";
+  return Object.keys(prefectureCenters).find((prefecture) => String(value || "").includes(prefecture)) || "";
 }
 
 async function resolveAddressFromPublicApis(postalCode, typedAddress, signal) {
@@ -3984,10 +3984,6 @@ function isValidCardExpiry(value) {
 function createActivationCode() {
   const part = () => String(Math.floor(1000 + Math.random() * 9000));
   return `${part()} ${part()}`;
-}
-
-function extractPrefecture(text) {
-  return Object.keys(prefectureCenters).find((prefecture) => String(text || "").includes(prefecture)) || "";
 }
 
 function setFieldError(name, message = "") {
