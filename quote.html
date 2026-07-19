@@ -3724,7 +3724,9 @@ async function resolveAddressFromPublicApis(postalCode, typedAddress, signal) {
   }
 
   const postalAddress = [prefecture, city, town].filter(Boolean).join("");
-  const fullAddress = typedAddress || postalAddress;
+  const fullAddress = typedAddress
+    ? (extractPrefecture(typedAddress) ? typedAddress : `${postalAddress}${typedAddress}`)
+    : postalAddress;
   let geocoded = null;
   try {
     const geocodeResponse = await fetch(
